@@ -1,6 +1,8 @@
 ﻿
 
 
+using System.Drawing;
+
 namespace ECMConsole
 {
     class Tester
@@ -8,7 +10,22 @@ namespace ECMConsole
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-            loadproject();
+            SaveImage();
+        }
+
+        static void SaveImage()
+        {
+            string path = @"C:\Users\whitelava3203\source\repos\EZ2ONChartMaker\ECM\project\8k슈랜클리어";
+            string outputpath = @"C:\Users\whitelava3203\source\repos\EZ2ONChartMaker\ECM\project\8k슈랜클리어\output.png";
+
+
+            var b = ECMBase.ECMDataLoader.LoadProject(path);
+
+            Image image = b.option.GetImage();
+
+
+
+            image.Save(outputpath);
         }
 
         static void loadproject()
