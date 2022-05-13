@@ -38,10 +38,10 @@ namespace ECMHelper
 
         void RefreshButtons()
         {
-            DataText1B.Text = currentProject.option.divider.topgap.ToString();
-            DataText2B.Text = currentProject.option.divider.leftgap.ToString();
-            DataText3B.Text = currentProject.option.divider.boxheight.ToString();
-            DataText4B.Text = currentProject.option.divider.boxgap.ToString();
+            DataText1B.Text = currentProject.option.divider.TOPGAP.ToString();
+            DataText2B.Text = currentProject.option.divider.LEFTGAP.ToString();
+            DataText3B.Text = currentProject.option.divider.BOXSIZE.ToString();
+            DataText4B.Text = currentProject.option.divider.BOXHEIGHTGAP.ToString();
         }
 
 
@@ -58,7 +58,7 @@ namespace ECMHelper
             if (int.TryParse(str,out int val))
             {
 
-                currentProject.option.divider.topgap = val;
+                currentProject.option.divider.TOPGAP = val;
             }
         }
 
@@ -68,7 +68,7 @@ namespace ECMHelper
             string str = (sender as TextBox).Text;
             if (int.TryParse(str, out int val))
             {
-                currentProject.option.divider.leftgap = val;
+                currentProject.option.divider.LEFTGAP = val;
             }
         }
 
@@ -79,7 +79,7 @@ namespace ECMHelper
             string str = (sender as TextBox).Text;
             if (int.TryParse(str, out int val))
             {
-                currentProject.option.divider.boxheight = val;
+                currentProject.option.divider.BOXSIZE = val;
             }
         }
 
@@ -90,7 +90,7 @@ namespace ECMHelper
             string str = (sender as TextBox).Text;
             if (int.TryParse(str, out int val))
             {
-                currentProject.option.divider.boxgap = val;
+                currentProject.option.divider.BOXHEIGHTGAP = val;
             }
         }
 

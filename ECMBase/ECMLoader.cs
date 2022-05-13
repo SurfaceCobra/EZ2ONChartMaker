@@ -25,7 +25,7 @@ namespace ECMBase
             project.NameDic = preProject.script.NameDic;
 
             {
-                List<(double, ECMLevel)> pll = new();
+                List<(double, ECMLevel)> pll = new List<(double, ECMLevel)>();
 
                 foreach (var (lv, originlv, name) in preProject.script.LEVELList)
                 {
@@ -51,7 +51,7 @@ namespace ECMBase
                         throw new NameNotFoundException(name);
                     }
 
-                    pll.Add((lv, level));
+                    pll.Add((lv,level));
                 }
 
 
