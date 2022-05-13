@@ -1,0 +1,201 @@
+
+
+
+
+@@NAME start_me_up
+스타트미업;
+startmeup;
+
+@@NAME kamui
+카무이;
+kamui;
+神威;
+kamui(神威);
+
+@@NAME kamui_hd
+카무이하드;
+kamuihd;
+神威hd;
+kamui(神威)hd;
+
+@@NAME rfcii
+알엪시2;
+r.f.c2;
+r.f.cii;
+r.f.c.2;
+r.f.c.ii;
+
+@@NAME hyper_magic
+하이퍼매직;
+하매;
+hypermagic;
+
+@@NAME guardian
+가디언;
+guardian;
+
+@@NAME pupa
+퓨파;
+푸파;
+pupa;
+
+@@NAME air
+에어;
+air;
+air(ez2onver);
+air(ez2onver.);
+
+@@NAME ultimatum
+얼티;
+얼티메이텀;
+ultimatum;
+
+@@NAME lucid
+루시드;
+lucid;
+
+@@NAME black_key
+흑건;
+blackkey;
+
+@@NAME goodtek
+굿텍;
+굿택;
+goodtek;
+
+@@NAME messier_333
+메시에;
+메시에333;
+메시어;
+메시어333;
+messier333;
+
+@@NAME encounter_on_orbit
+오르빗;
+엔오빗;
+encounteronorbit;
+
+@@NAME apollon
+아폴론;
+apollon;
+
+@@NAME lightyear
+라이트예어;
+lightyear;
+
+@@NAME 開花
+개화;
+開花;
+
+@@NAME fire_storm
+파톰;
+파이어스톰;
+firestorm;
+
+@@NAME infinity
+인피;
+인피니티;
+infinity;
+
+@@NAME the_ashtray
+재떨이;
+theashtray;
+ashtray;
+
+@@NAME 20000000000
+이백억;
+2백억;
+20000000000;
+2000000000;
+
+@@NAME kthnox
+크트녹스;
+크쓰녹스;
+어쩌구녹스;
+kthnox;
+
+@@NAME revelation
+리벨;
+레벨;
+리벨레이션;
+레벨레이션;
+revelation;
+
+@@NAME atopy
+아토피;
+atopy;
+
+@@NAME zeroize
+제로;
+제로아이즈;
+zeroize;
+
+@@NAME backfire
+백파;
+백파이어;
+애옹애옹;
+backfire;
+
+@@NAME picking
+피킹;
+picking;
+
+@@NAME sinus
+사이너스;
+sinus;
+
+@@NAME eraser_rain_for_gaia
+지우개;
+가이아;
+이레이저;
+eraserrainforgaia;
+
+@@NAME altered_ego
+알터드;
+알터드에고;
+alteredego;
+
+@@NAME takeoff
+takeoff;
+
+@@NAME the_prince_of_darkness
+프오닥;
+princeofdarkness;
+princessofdarkness;
+theprinceofdarkness;
+theprincessofdarkness;
+
+@@NAME round_3
+라3;
+라삼;
+round3;
+
+@@NAME max301
+맥스301;
+max301;
+
+@@NAME black_sour_ruby
+블사루;
+blacksourruby;
+
+@@NAME weird_wave
+위어드;
+웨이브;
+weirdwave;
+
+@@NAME brain_power
+브파;
+브레인파워;
+brainpower;
+
+@@NAME trpno
+trpno;
+
+@@NAME unleashed_emotions
+unleashedemotions;
+
+@@NAME second_choice
+secondchoice;
+
+
+

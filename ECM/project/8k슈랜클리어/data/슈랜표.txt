@@ -1,0 +1,56 @@
+@LABEL
+주석;
+
+@@LEVEL 23
+18 Start Me Up;
+
+@@LEVEL 22
+20 Kamui;
+20 R.F.C. II;
+19 Hyper Magic;
+
+@@LEVEL 21
+20 Guardian;
+20 PUPA;
+20 AIR;
+20 ULTIMATUM;
+20 Lucid;
+19 흑건;
+19 GOODTEK;
+19 Messier 333;
+
+@@LEVEL 20
+20 Encounter on orbit;
+19 ApolloN;
+19 LIGHTYEAR;
+19 개화;
+19 Fire Storm;
+19 INFINITY;
+19 The ASHTRAY;
+18 20000000000;
+18 kthnox;
+18 Revelation;
+
+@@LEVEL 19
+20 ATOPY;
+19 Zeroize;
+19 Backfire;
+19 picking;
+18 Sinus;
+18 Eraser Rain for GAIA;
+18 Altered Ego;
+18 TakeOFF;
+18 The Princess of Darkness;
+18 Round 3;
+18 MAX301;
+18 Black sour Ruby;
+18 Weird Wave;
+
+@@LEVEL 18
+18 Brain Power;
+18 TRPNO;
+18 Unleashed Emotions;
+18 Second Choice;
+
+
+
