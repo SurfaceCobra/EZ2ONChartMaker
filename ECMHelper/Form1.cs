@@ -4,8 +4,8 @@ namespace ECMHelper
 {
     public partial class Form1 : Form
     {
-
-        ECMProject currentProject = ECMProject.Create();
+        ECMDrawer drawer = new ECMDrawer();
+        ECMProject currentProject = new();
         string currentProjectPath;
 
         public Form1()
@@ -19,7 +19,7 @@ namespace ECMHelper
         public void UpdateImage()
         {
             if (PictureBox.Image!=null) PictureBox.Image.Dispose();
-            PictureBox.Image = currentProject.option.GetImage();
+            PictureBox.Image = drawer.Draw(currentProject);
 
             PictureBox.Update();
         }
@@ -111,7 +111,7 @@ namespace ECMHelper
             string str = OpenFolderDialog();
             if (str != "")
             {
-                this.currentProject = ECMDataLoader.LoadProject(str);
+                this.currentProject = ECMLoader.LoadProject(str);
                 
                 RefreshButtons();
             }
@@ -123,7 +123,7 @@ namespace ECMHelper
             if(currentProjectPath==null)
                 currentProjectPath = OpenFolderDialog();
 
-            ECMDataLoader.SaveProjectOption(this.currentProject.option, currentProjectPath);
+            ECMLoader.SaveProjectOption(this.currentProject.option, currentProjectPath);
 
         }
 

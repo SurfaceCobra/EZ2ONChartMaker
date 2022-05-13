@@ -19,9 +19,11 @@ namespace ECMConsole
             string outputpath = @"C:\Users\whitelava3203\source\repos\EZ2ONChartMaker\ECM\project\8k슈랜클리어\output.png";
 
 
-            var b = ECMBase.ECMDataLoader.LoadProject(path);
+            var project = ECMBase.ECMLoader.LoadProject(path);
 
-            Image image = b.option.GetImage();
+            ECMBase.ECMDrawer drawer = new ECMBase.ECMDrawer();
+            Image image = drawer.Draw(project);
+            
 
 
 
@@ -32,7 +34,7 @@ namespace ECMConsole
         {
             string path = @"C:\Users\whitelava3203\source\repos\EZ2ONChartMaker\ECM\project\8k슈랜클리어";
 
-            var b = ECMBase.ECMDataLoader.LoadProject(path);
+            var b = ECMBase.PreECMDataLoader.LoadPreProject(path);
 
             Console.WriteLine();
 
@@ -44,7 +46,7 @@ namespace ECMConsole
         {
             string path = @"C:\Users\whitelava3203\source\repos\EZ2ONChartMaker\ECM\project\8k슈랜클리어\data\data.txt";
 
-            var b = ECMBase.ECMDataLoader.LoadScript(path);
+            var b = ECMBase.PreECMDataLoader.LoadPreScript(path);
 
             Console.WriteLine();
 
