@@ -67,7 +67,7 @@ namespace ECMBase
         public int BOXWIDTHGAP = 4;
 
         //아직안만듬
-        public int MAXBOXCOUNT = 12;
+        public int MAXBOXCOUNT = 6;
 
         //아직안만듬
         public TextBase COVEROVERLAY1;
@@ -195,6 +195,38 @@ namespace ECMBase
             LEFTLEVELS = project.LevelList.Keys.ToArray();
 
 
+            YCOVERAXIS = new int[BOX_YCOUNT];
+            for(int i=0;i<BOX_YCOUNT;i++)
+            {
+                YCOVERAXIS[i] = TOPGAP + BOXHEIGHTGAP + (i * (BOXSIZE + BOXHEIGHTGAP));
+            }
+
+
+
+
+            //TETRIS
+            TETRIS = new bool[256, 256];
+            for(int i=0;i<TETRIS.GetLength(0);i++)
+            {
+                for(int j=0;j<TETRIS.GetLength(1);j++)
+                {
+                    TETRIS[i, j] = false;
+                }
+            }
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
 
             
             Image output = GetEmptyBitmap();
@@ -208,7 +240,7 @@ namespace ECMBase
                 for (int j = 0; j < vv.Count; j++)
                 {
                     int x2 = LEFTGAP + (j * (BOXSIZE + BOXWIDTHGAP));
-                    int y2 = TOPGAP + BOXHEIGHTGAP + (i * (BOXSIZE + BOXHEIGHTGAP));
+                    int y2 = YCOVERAXIS[i];
                     ECMLevel? v = vv[j];
                     var w = v.SelfDraw(this);
                     w.rect = new Rectangle(x2,y2,BOXSIZE,BOXSIZE);
