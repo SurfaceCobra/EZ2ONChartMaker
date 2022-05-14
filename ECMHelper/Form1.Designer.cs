@@ -51,17 +51,24 @@
             this.DataText2A = new System.Windows.Forms.TextBox();
             this.DataText3A = new System.Windows.Forms.TextBox();
             this.ButtonImageUpdate = new System.Windows.Forms.Button();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             ButtonImageLoad = new System.Windows.Forms.Button();
             ButtonImageDelete = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.PictureBox)).BeginInit();
             this.contextMenuStrip1.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // ButtonImageLoad
             // 
-            ButtonImageLoad.Location = new System.Drawing.Point(622, 12);
+            ButtonImageLoad.Location = new System.Drawing.Point(6, 6);
             ButtonImageLoad.Name = "ButtonImageLoad";
-            ButtonImageLoad.Size = new System.Drawing.Size(128, 23);
+            ButtonImageLoad.Size = new System.Drawing.Size(111, 23);
             ButtonImageLoad.TabIndex = 1;
             ButtonImageLoad.Text = "이미지 불러오기";
             ButtonImageLoad.UseVisualStyleBackColor = true;
@@ -69,7 +76,7 @@
             // 
             // ButtonImageDelete
             // 
-            ButtonImageDelete.Location = new System.Drawing.Point(756, 12);
+            ButtonImageDelete.Location = new System.Drawing.Point(6, 278);
             ButtonImageDelete.Name = "ButtonImageDelete";
             ButtonImageDelete.Size = new System.Drawing.Size(122, 23);
             ButtonImageDelete.TabIndex = 20;
@@ -88,7 +95,7 @@
             // 
             // DataText1B
             // 
-            this.DataText1B.Location = new System.Drawing.Point(778, 230);
+            this.DataText1B.Location = new System.Drawing.Point(86, 35);
             this.DataText1B.Name = "DataText1B";
             this.DataText1B.Size = new System.Drawing.Size(100, 23);
             this.DataText1B.TabIndex = 6;
@@ -119,79 +126,79 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(622, 230);
+            this.textBox2.Location = new System.Drawing.Point(6, 35);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(100, 23);
+            this.textBox2.Size = new System.Drawing.Size(75, 23);
             this.textBox2.TabIndex = 8;
             this.textBox2.Text = "위측 간격";
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(622, 288);
+            this.textBox3.Location = new System.Drawing.Point(6, 93);
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(100, 23);
+            this.textBox3.Size = new System.Drawing.Size(75, 23);
             this.textBox3.TabIndex = 9;
             this.textBox3.Text = "칸 높이";
             // 
             // textBox4
             // 
-            this.textBox4.Location = new System.Drawing.Point(622, 317);
+            this.textBox4.Location = new System.Drawing.Point(6, 122);
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
-            this.textBox4.Size = new System.Drawing.Size(100, 23);
+            this.textBox4.Size = new System.Drawing.Size(75, 23);
             this.textBox4.TabIndex = 10;
             this.textBox4.Text = "칸 간격";
             // 
             // textBox6
             // 
-            this.textBox6.Location = new System.Drawing.Point(622, 201);
+            this.textBox6.Location = new System.Drawing.Point(6, 6);
             this.textBox6.Name = "textBox6";
             this.textBox6.ReadOnly = true;
-            this.textBox6.Size = new System.Drawing.Size(256, 23);
+            this.textBox6.Size = new System.Drawing.Size(180, 23);
             this.textBox6.TabIndex = 12;
             this.textBox6.Text = "구분선 설정";
             // 
             // textBox7
             // 
-            this.textBox7.Location = new System.Drawing.Point(622, 259);
+            this.textBox7.Location = new System.Drawing.Point(6, 64);
             this.textBox7.Name = "textBox7";
             this.textBox7.ReadOnly = true;
-            this.textBox7.Size = new System.Drawing.Size(100, 23);
+            this.textBox7.Size = new System.Drawing.Size(75, 23);
             this.textBox7.TabIndex = 13;
             this.textBox7.Text = "좌측 간격";
             // 
             // textBox5
             // 
-            this.textBox5.Location = new System.Drawing.Point(622, 41);
+            this.textBox5.Location = new System.Drawing.Point(6, 35);
             this.textBox5.Name = "textBox5";
             this.textBox5.ReadOnly = true;
-            this.textBox5.Size = new System.Drawing.Size(100, 23);
+            this.textBox5.Size = new System.Drawing.Size(66, 23);
             this.textBox5.TabIndex = 14;
             this.textBox5.Text = "x좌표";
             // 
             // textBox8
             // 
-            this.textBox8.Location = new System.Drawing.Point(622, 70);
+            this.textBox8.Location = new System.Drawing.Point(6, 64);
             this.textBox8.Name = "textBox8";
             this.textBox8.ReadOnly = true;
-            this.textBox8.Size = new System.Drawing.Size(100, 23);
+            this.textBox8.Size = new System.Drawing.Size(66, 23);
             this.textBox8.TabIndex = 15;
             this.textBox8.Text = "y좌표";
             // 
             // textBox9
             // 
-            this.textBox9.Location = new System.Drawing.Point(622, 99);
+            this.textBox9.Location = new System.Drawing.Point(6, 93);
             this.textBox9.Name = "textBox9";
             this.textBox9.ReadOnly = true;
-            this.textBox9.Size = new System.Drawing.Size(100, 23);
+            this.textBox9.Size = new System.Drawing.Size(66, 23);
             this.textBox9.TabIndex = 16;
             this.textBox9.Text = "높이";
             // 
             // DataText2B
             // 
-            this.DataText2B.Location = new System.Drawing.Point(778, 259);
+            this.DataText2B.Location = new System.Drawing.Point(86, 64);
             this.DataText2B.Name = "DataText2B";
             this.DataText2B.Size = new System.Drawing.Size(100, 23);
             this.DataText2B.TabIndex = 17;
@@ -199,7 +206,7 @@
             // 
             // DataText3B
             // 
-            this.DataText3B.Location = new System.Drawing.Point(778, 288);
+            this.DataText3B.Location = new System.Drawing.Point(86, 93);
             this.DataText3B.Name = "DataText3B";
             this.DataText3B.Size = new System.Drawing.Size(100, 23);
             this.DataText3B.TabIndex = 18;
@@ -207,7 +214,7 @@
             // 
             // DataText4B
             // 
-            this.DataText4B.Location = new System.Drawing.Point(778, 317);
+            this.DataText4B.Location = new System.Drawing.Point(86, 122);
             this.DataText4B.Name = "DataText4B";
             this.DataText4B.Size = new System.Drawing.Size(100, 23);
             this.DataText4B.TabIndex = 19;
@@ -215,28 +222,28 @@
             // 
             // DataText1A
             // 
-            this.DataText1A.Location = new System.Drawing.Point(778, 41);
+            this.DataText1A.Location = new System.Drawing.Point(78, 35);
             this.DataText1A.Name = "DataText1A";
-            this.DataText1A.Size = new System.Drawing.Size(100, 23);
+            this.DataText1A.Size = new System.Drawing.Size(108, 23);
             this.DataText1A.TabIndex = 21;
             // 
             // DataText2A
             // 
-            this.DataText2A.Location = new System.Drawing.Point(778, 70);
+            this.DataText2A.Location = new System.Drawing.Point(78, 64);
             this.DataText2A.Name = "DataText2A";
-            this.DataText2A.Size = new System.Drawing.Size(100, 23);
+            this.DataText2A.Size = new System.Drawing.Size(108, 23);
             this.DataText2A.TabIndex = 22;
             // 
             // DataText3A
             // 
-            this.DataText3A.Location = new System.Drawing.Point(778, 99);
+            this.DataText3A.Location = new System.Drawing.Point(78, 93);
             this.DataText3A.Name = "DataText3A";
-            this.DataText3A.Size = new System.Drawing.Size(100, 23);
+            this.DataText3A.Size = new System.Drawing.Size(108, 23);
             this.DataText3A.TabIndex = 23;
             // 
             // ButtonImageUpdate
             // 
-            this.ButtonImageUpdate.Location = new System.Drawing.Point(625, 385);
+            this.ButtonImageUpdate.Location = new System.Drawing.Point(622, 485);
             this.ButtonImageUpdate.Name = "ButtonImageUpdate";
             this.ButtonImageUpdate.Size = new System.Drawing.Size(125, 23);
             this.ButtonImageUpdate.TabIndex = 24;
@@ -244,38 +251,84 @@
             this.ButtonImageUpdate.UseVisualStyleBackColor = true;
             this.ButtonImageUpdate.Click += new System.EventHandler(this.ButtonImageUpdate_Click);
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Location = new System.Drawing.Point(625, 12);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(253, 467);
+            this.tabControl1.TabIndex = 25;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPage1.Controls.Add(this.textBox6);
+            this.tabPage1.Controls.Add(this.textBox2);
+            this.tabPage1.Controls.Add(this.textBox7);
+            this.tabPage1.Controls.Add(this.textBox3);
+            this.tabPage1.Controls.Add(this.DataText4B);
+            this.tabPage1.Controls.Add(this.textBox4);
+            this.tabPage1.Controls.Add(this.DataText3B);
+            this.tabPage1.Controls.Add(this.DataText1B);
+            this.tabPage1.Controls.Add(this.DataText2B);
+            this.tabPage1.Location = new System.Drawing.Point(4, 24);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(245, 439);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "구분선";
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPage2.Controls.Add(ButtonImageLoad);
+            this.tabPage2.Controls.Add(this.textBox5);
+            this.tabPage2.Controls.Add(this.textBox8);
+            this.tabPage2.Controls.Add(ButtonImageDelete);
+            this.tabPage2.Controls.Add(this.DataText3A);
+            this.tabPage2.Controls.Add(this.textBox9);
+            this.tabPage2.Controls.Add(this.DataText2A);
+            this.tabPage2.Controls.Add(this.DataText1A);
+            this.tabPage2.Location = new System.Drawing.Point(4, 24);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(245, 439);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "이미지";
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPage3.Location = new System.Drawing.Point(4, 24);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(245, 439);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "텍스트";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(890, 520);
             this.ContextMenuStrip = this.contextMenuStrip1;
+            this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.ButtonImageUpdate);
-            this.Controls.Add(this.DataText3A);
-            this.Controls.Add(this.DataText2A);
-            this.Controls.Add(this.DataText1A);
-            this.Controls.Add(ButtonImageDelete);
-            this.Controls.Add(this.DataText4B);
-            this.Controls.Add(this.DataText3B);
-            this.Controls.Add(this.DataText2B);
-            this.Controls.Add(this.textBox9);
-            this.Controls.Add(this.textBox8);
-            this.Controls.Add(this.textBox5);
-            this.Controls.Add(this.textBox7);
-            this.Controls.Add(this.textBox6);
-            this.Controls.Add(this.textBox4);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.DataText1B);
-            this.Controls.Add(ButtonImageLoad);
             this.Controls.Add(this.PictureBox);
             this.Name = "Form1";
             this.Text = "EZ2ON 서열표 제작기";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.PictureBox)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -302,5 +355,9 @@
         private TextBox DataText2A;
         private TextBox DataText3A;
         private Button ButtonImageUpdate;
+        private TabControl tabControl1;
+        private TabPage tabPage1;
+        private TabPage tabPage2;
+        private TabPage tabPage3;
     }
 }

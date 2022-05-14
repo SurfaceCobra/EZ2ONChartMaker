@@ -163,6 +163,12 @@ namespace ECMBase
         public double[] LEFTLEVELS;
 
 
+        public int[] YCOVERAXIS;
+        public int[] YLINEAXIS;
+        public bool[,] TETRIS;
+        
+
+
         public interface IImageDrawable
         {
             public StackableImage SelfDraw(ECMDrawer drawer);

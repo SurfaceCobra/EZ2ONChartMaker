@@ -73,6 +73,12 @@ namespace ECMBase
             return project;
         }
         public static ECMProject LoadProject(string projectPath) => LoadProject(PreECMDataLoader.LoadPreProject(projectPath));
+        
+        public static ECMProject LoadGlobalProject(PreECMProject preProject)
+        {
+            throw new NotImplementedException();
+        }
+    
     }
 
 }
