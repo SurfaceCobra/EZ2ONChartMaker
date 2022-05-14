@@ -65,7 +65,7 @@ namespace ECMBase
         public int BOXWIDTHGAP = 4;
 
         //아직안만듬
-        public int MAXBOXCOUNT = 8;
+        public int MAXBOXCOUNT = 5;
 
         //아직안만듬
         public TextBase COVEROVERLAY1;
@@ -283,17 +283,13 @@ namespace ECMBase
                 for (int x = 0; x < xcount; x++)
                 {
                     realx = x % MAXBOXCOUNT;
-                    realy = currenty + (int)Math.Ceiling((double)x / MAXBOXCOUNT);
+                    realy = currenty + (int)Math.Floor((double)x / MAXBOXCOUNT);
                     map[realx, realy] = new STATE.LEVEL(levels[x]);
 
-                    
-                }
-                for(int i=currenty; i<realy || i==0;i++)
-                {
-                    lvs[i] = lv;
+                    lvs[realy] = lv;
                 }
 
-                Height = realy;
+                Height = realy+1;
                 Width = Math.Max(Math.Min(levels.Count(),MAXBOXCOUNT), Width);
             }
 
