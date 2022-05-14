@@ -1,6 +1,4 @@
 ﻿using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
 
 namespace ECMBase
 {
@@ -79,7 +77,7 @@ namespace ECMBase
         //만드는중
         public TextBase LEFTLEVEL = new TextBase(new Font("Verdana",18),100,Color.Black);
         public int LEFTLEVELLEFTGAP = 2;
-        public int LEFTLEVELTOPGAP = 40;
+        public int LEFTLEVELYOFFSET = 27;
         public string LEFTLEVELSUFFIX = "렙";
 
         public bool SHOWLINE = true;
@@ -105,13 +103,22 @@ namespace ECMBase
 
             if(SHOWLEFTLEVEL)
             {
-                for (int i = 0; i < drawer.BOX_YCOUNT; i ++)
+                for (int i = 0; i < drawer.BOX_YCOUNT; i++)
                 {
-                    int y = drawer.YCOVERAXIS[i];
+                    int count = drawer.LEFTLEVELS.Skip(i+1).TakeWhile((val) => val == drawer.LEFTLEVELS[i]).Count();
 
-                    var sm = LEFTLEVEL.Draw(drawer, drawer.LEFTLEVELS[i].ToString()+LEFTLEVELSUFFIX, LEFTLEVELLEFTGAP, y, 2);
+                    int yaxis1 = drawer.YCOVERAXIS[i];
+                    int yaxis2 = drawer.YCOVERAXIS[i+count];
+
+                    int yaxis = (yaxis1 + yaxis2) / 2 + LEFTLEVELYOFFSET;
+
+
+
+                    var sm = LEFTLEVEL.Draw(drawer, drawer.LEFTLEVELS[i].ToString() + LEFTLEVELSUFFIX, LEFTLEVELLEFTGAP, yaxis, 2);
 
                     canvas.DrawImage(sm.image, new Point(sm.rect.X, sm.rect.Y));
+
+                    i += count;
                 }
             }
 
@@ -279,7 +286,11 @@ namespace ECMBase
                     realy = currenty + (int)Math.Ceiling((double)x / MAXBOXCOUNT);
                     map[realx, realy] = new STATE.LEVEL(levels[x]);
 
-                    lvs[realy] = lv;
+                    
+                }
+                for(int i=currenty; i<realy || i==0;i++)
+                {
+                    lvs[i] = lv;
                 }
 
                 Height = realy;
