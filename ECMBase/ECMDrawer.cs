@@ -67,7 +67,7 @@ namespace ECMBase
         public int BOXWIDTHGAP = 4;
 
         //아직안만듬
-        public int MAXBOXCOUNT = 6;
+        public int MAXBOXCOUNT = 8;
 
         //아직안만듬
         public TextBase COVEROVERLAY1;
@@ -96,13 +96,10 @@ namespace ECMBase
             if (SHOWLINE)
             {
                 using Pen pineapple = new Pen(LINECOLOR, LINESIZE);
-                
-                bool turn = true;
 
-                for (int i = TOPGAP; i < drawer.MAX_HEIGHT; i += turn ? BOXSIZE : BOXHEIGHTGAP)
+                for(int i=0;i<drawer.YLINEAXIS.Length;i++)
                 {
-                    canvas.DrawLine(pineapple, LEFTGAP, i, drawer.MAX_WIDTH, i);
-                    turn = !turn;
+                    canvas.DrawLine(pineapple, LEFTGAP, drawer.YLINEAXIS[i], drawer.MAX_WIDTH-drawer.RIGHTGAP, drawer.YLINEAXIS[i]);
                 }
             }
 
@@ -110,7 +107,7 @@ namespace ECMBase
             {
                 for (int i = 0; i < drawer.BOX_YCOUNT; i ++)
                 {
-                    int y = TOPGAP + (i * (BOXSIZE + BOXHEIGHTGAP)) + LEFTLEVELTOPGAP;
+                    int y = drawer.YCOVERAXIS[i];
 
                     var sm = LEFTLEVEL.Draw(drawer, drawer.LEFTLEVELS[i].ToString()+LEFTLEVELSUFFIX, LEFTLEVELLEFTGAP, y, 2);
 
@@ -165,8 +162,7 @@ namespace ECMBase
 
         public int[] YCOVERAXIS;
         public int[] YLINEAXIS;
-        public bool[,] TETRIS;
-        
+        public STATEMAP TETRIS;
 
 
         public interface IImageDrawable
@@ -174,6 +170,165 @@ namespace ECMBase
             public StackableImage SelfDraw(ECMDrawer drawer);
         }
 
+        public class STATEMAP
+        {
+            STATE[,] map;
+            ECMProject project;
+
+
+            public int Height= int.MinValue;
+            public int Width=int.MinValue;
+
+            public int Gapless;
+
+            public double[] lvs;
+
+
+
+            /*
+            public IEnumerable<STATE> GetXLines(int y, out int index)
+            {
+                for(index=0;index<Width;index++)
+                {
+                    yield return map[index, y];
+                }
+                yield break;
+            }
+            */
+
+
+            public STATE this[int x,int y]
+            {
+                get
+                {
+                    return this.map[x, y];
+                }
+                set
+                {
+                    this.map[x,y] = value;
+                }
+            }
+
+            public STATEMAP(ECMProject project, bool doRefresh = true)
+            {
+                this.project = project;
+                if (doRefresh)
+                {
+                    this.Refresh();
+                }
+            }
+
+            public void Refresh()
+            {
+                Reset();
+                Update();
+            }
+            public void Update()
+            {
+                StackProject(project);
+            }
+            public void Reset()
+            {
+                this.map = new STATE[256, 256];
+                for (int i = 0; i < map.GetLength(0); i++)
+                {
+                    for (int j = 0; j < map.GetLength(1); j++)
+                    {
+                        map[i, j] = new STATE.NULL();
+                    }
+                }
+                lvs = new double[256];
+            }
+
+            void StackProject(ECMProject project)
+            {
+                StackLevels(project.LevelList);
+            }
+
+            void StackLevels(Dictionary<double, List<ECMLevel>> levelList)
+            {
+                foreach(var level in levelList)
+                {
+                    StackLine(level.Key, level.Value);
+                }
+            }
+
+            void StackLine(double lv, List<ECMLevel> levels)
+            {
+                int currenty = 0;
+                int MAXBOXCOUNT = project.option.divider.MAXBOXCOUNT;
+
+                for (int i = 0; i < 256; i++)
+                {
+                    if (map[0, i].GetType() == typeof(STATE.NULL))
+                    {
+                        currenty = i;
+                        map[0, i] = new STATE.EMPTY();
+                        break;
+                    }
+                }
+
+                int xcount = levels.Count();
+
+
+                int realy = Height;
+                int realx;
+                for (int x = 0; x < xcount; x++)
+                {
+                    realx = x % MAXBOXCOUNT;
+                    realy = currenty + (int)Math.Ceiling((double)x / MAXBOXCOUNT);
+                    map[realx, realy] = new STATE.LEVEL(levels[x]);
+
+                    lvs[realy] = lv;
+                }
+
+                Height = realy;
+                Width = Math.Max(Math.Min(levels.Count(),MAXBOXCOUNT), Width);
+            }
+
+
+        }
+        public interface STATE
+        {
+            public class NULL : STATE
+            {
+
+            }
+            public class EMPTY : STATE
+            {
+
+            }
+            public class LEVEL : STATE
+            {
+                public ECMLevel data;
+
+                public LEVEL(ECMLevel data)
+                {
+                    this.data = data;
+                }
+            }
+            public class LEVELRANGED : STATE
+            {
+                public ECMLevel data;
+
+                public LEVELRANGED(ECMLevel data)
+                {
+                    this.data = data;
+                }
+            }
+            public class LEVELRANGEDLEG : STATE
+            {
+
+            }
+            public class LEVELRANGEDTOP : STATE
+            {
+
+            }
+            public class LEVELRANGEDBOTTOM : STATE
+            {
+
+            }
+        }
 
         public Image Draw(ECMProject project)
         {
@@ -186,35 +341,75 @@ namespace ECMBase
             BOXHEIGHTGAP = project.option.divider.BOXHEIGHTGAP;
             BOXWIDTHGAP = project.option.divider.BOXWIDTHGAP; ;
 
-            BOX_YCOUNT = project.LevelList.Count;
-            BOX_XCOUNT = project.LevelList.MaxBy((val)=>val.Value.Count).Value.Count;
+
+
+
+
+
+
+
+
+            TETRIS = new STATEMAP(project);
+
+            BOX_YCOUNT = TETRIS.Height;
+            BOX_XCOUNT = TETRIS.Width;
+
+            LEFTLEVELS = TETRIS.lvs;
+
+
+
 
             MAX_HEIGHT = TOPGAP + (BOX_YCOUNT * (BOXSIZE + BOXHEIGHTGAP)) + BOTTOMGAP;
-            MAX_WIDTH = LEFTGAP + (BOX_XCOUNT* (BOXSIZE + BOXWIDTHGAP)) + RIGHTGAP;
+            MAX_WIDTH = LEFTGAP + (BOX_XCOUNT * (BOXSIZE + BOXWIDTHGAP)) + RIGHTGAP;
 
-            LEFTLEVELS = project.LevelList.Keys.ToArray();
-
-
-            YCOVERAXIS = new int[BOX_YCOUNT];
-            for(int i=0;i<BOX_YCOUNT;i++)
+            //YLINEAXIS, YCOVERAXIS
             {
-                YCOVERAXIS[i] = TOPGAP + BOXHEIGHTGAP + (i * (BOXSIZE + BOXHEIGHTGAP));
-            }
+                List<int> yCoverAxisList = new List<int>();
+                List<int> yLineAxisList = new List<int>();
+                int currenty = TOPGAP + BOXHEIGHTGAP;
 
-
-
-
-            //TETRIS
-            TETRIS = new bool[256, 256];
-            for(int i=0;i<TETRIS.GetLength(0);i++)
-            {
-                for(int j=0;j<TETRIS.GetLength(1);j++)
+                for (int i = 0; i < TETRIS.Height; i++)
                 {
-                    TETRIS[i, j] = false;
+
+                    yCoverAxisList.Add(currenty);
+
+
+                    //CheckTopSame
+                    if (i > 0)
+                    {
+                        if (LEFTLEVELS[i] == LEFTLEVELS[i-1])
+                        {
+
+                        }
+                        else
+                        {
+                            yLineAxisList.Add(currenty);
+                        }
+                    }
+
+
+                    //CheckBottomSame
+                    if (i < TETRIS.Height - 1)
+                    {
+                        if (LEFTLEVELS[i] == LEFTLEVELS[i + 1])
+                        {
+                            currenty += BOXSIZE;
+                        }
+                        else
+                        {
+                            yLineAxisList.Add(currenty + BOXSIZE);
+
+                            currenty += BOXSIZE + BOXHEIGHTGAP;
+                        }
+                    }
+
+                    
                 }
+
+                YLINEAXIS = yLineAxisList.ToArray();
+                YCOVERAXIS = yCoverAxisList.ToArray();
             }
 
-
             
 
 
@@ -224,27 +419,35 @@ namespace ECMBase
 
 
 
-
-
-
-
-            
             Image output = GetEmptyBitmap();
             List<StackableImage> drawStack = new List<StackableImage>();
 
 
             //곡 디스크이미지 스택
-            for (int i=0;i< project.LevelList.Values.Count; i++)
+            for (int y=0;y< TETRIS.Height; y++)
             {
-                var vv = project.LevelList.Values.ElementAt(i);
-                for (int j = 0; j < vv.Count; j++)
+                for(int x=0;x<TETRIS.Width;x++)
                 {
-                    int x2 = LEFTGAP + (j * (BOXSIZE + BOXWIDTHGAP));
-                    int y2 = YCOVERAXIS[i];
-                    ECMLevel? v = vv[j];
-                    var w = v.SelfDraw(this);
-                    w.rect = new Rectangle(x2,y2,BOXSIZE,BOXSIZE);
-                    drawStack.Add(w);
+                    int x2 = LEFTGAP + (x * (BOXSIZE + BOXWIDTHGAP));
+                    int y2 = YCOVERAXIS[y];
+
+                    switch(TETRIS[x,y])
+                    {
+                        case STATE.EMPTY:
+                        case STATE.NULL:
+                            break;
+
+                        case STATE.LEVEL level:
+                            var w = level.data.SelfDraw(this);
+                            w.rect = new Rectangle(x2, y2, BOXSIZE, BOXSIZE);
+                            drawStack.Add(w);
+                            break;
+
+                        default:
+                            throw new Exception("?>???");
+                    }
+
+                    
                 }
             }
 

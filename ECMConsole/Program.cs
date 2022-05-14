@@ -10,6 +10,9 @@ namespace ECMConsole
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
+
+            //Console.WriteLine(Math.Ceiling((double)1/8));
+
             SaveImage();
         }
 
