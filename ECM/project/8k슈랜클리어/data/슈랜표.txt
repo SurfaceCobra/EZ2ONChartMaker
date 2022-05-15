@@ -30,6 +30,7 @@
 18 20000000000;
 18 kthnox;
 18 Revelation;
+18 Minus 2;
 
 @@LEVEL 19
 20 ATOPY;
@@ -45,11 +46,14 @@
 18 MAX301;
 18 Black sour Ruby;
 18 Weird Wave;
+17 R.F.C.;
 
 @@LEVEL 18
 18 Brain Power;
 18 TRPNO;
 18 Unleashed Emotions;
 18 Second Choice;
+18 Engine;
+18 DataErr0r;
 
 

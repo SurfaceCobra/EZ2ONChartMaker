@@ -162,7 +162,7 @@ namespace ECMBase
             '-',
             '=',
             '+',
-            '.',
+//            '.',
         };
         char[] IgnoreWords = new char[]
         {

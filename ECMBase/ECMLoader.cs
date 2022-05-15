@@ -30,6 +30,7 @@ namespace ECMBase
                 foreach (var (lv, originlv, name) in preProject.script.LEVELList)
                 {
                     ECMLevel level = new ECMLevel();
+                    bool ok = true;
 
                     if (preProject.script.NameDic.TryGetValue(name, out string fixedname))
                     {
@@ -42,16 +43,21 @@ namespace ECMBase
                         }
                         else
                         {
-                            throw new ImageNotFoundException(fixedname);
+                            ok = false;
+                            Log.Warning($"{name} 이미지가 없음.");
+                            //throw new ImageNotFoundException(fixedname);
                         }
 
                     }
                     else
                     {
-                        throw new NameNotFoundException(name);
+                        ok = false;
+                        Log.Warning($"{name} 이름이 없음.");
+                        //throw new NameNotFoundException(name);
                     }
 
-                    pll.Add((lv,level));
+                    if(ok)
+                        pll.Add((lv,level));
                 }
 
 
