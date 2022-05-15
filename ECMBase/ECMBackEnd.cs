@@ -8,25 +8,24 @@ using ObjectManager;
 
 namespace ECMBase
 {
-
-
-    public struct DoubleRange
+    public record struct DoubleRanged(double left, double right)
     {
-        public double left;
-        public double right;
-
-        public DoubleRange(double left, double right)
+        public static implicit operator (double left, double right)(DoubleRanged value)
         {
-            this.left = left;
-            this.right = right;
+            return (value.left, value.right);
+        }
+
+        public static implicit operator DoubleRanged((double left, double right) value)
+        {
+            return new DoubleRanged(value.left, value.right);
         }
     }
 
 
-    public class ECMProject
+public class ECMProject
     {
         public Dictionary<double, List<ECMLevel>> LevelList;
-        public Dictionary<DoubleRange, List<ECMLevel>> LevelListRanged;
+        public Dictionary<DoubleRanged, List<ECMLevel>> LevelRangedList;
         public Dictionary<string, string> NameDic;
 
         public ECMOption option;
@@ -34,7 +33,7 @@ namespace ECMBase
         public ECMProject()
         {
             this.LevelList = new();
-            this.LevelListRanged = new();
+            this.LevelRangedList = new();
             this.NameDic = new();
             this.option = new();
         }

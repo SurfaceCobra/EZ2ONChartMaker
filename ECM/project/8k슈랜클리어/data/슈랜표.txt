@@ -49,11 +49,15 @@
 17 R.F.C.;
 
 @@LEVEL 18
-18 Brain Power;
 18 TRPNO;
 18 Unleashed Emotions;
 18 Second Choice;
 18 Engine;
 18 DataErr0r;
+
+
+@@@LEVELRANGE 17 18
+18 Brain Power;
+
 
 

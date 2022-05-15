@@ -25,26 +25,42 @@ namespace ECMBase
             project.NameDic = preProject.script.NameDic;
 
             {
-                List<(double, ECMLevel)> pll = new List<(double, ECMLevel)>();
+                List<(double, ECMLevel)> imshiLevelList = new List<(double, ECMLevel)>();
+                List<(DoubleRanged, ECMLevel)> imshiLevelRangedList = new List<(DoubleRanged, ECMLevel)>();
 
-                foreach (var (lv, originlv, name) in preProject.script.LEVELList)
+                foreach (var prelevel in preProject.script.LevelList)
                 {
-                    ECMLevel level = new ECMLevel();
+                    if(TryLoadLevel((prelevel.origin, prelevel.name), out ECMLevel level))
+                    {
+                        imshiLevelList.Add((prelevel.lv, level));
+                    }
+                }
+                foreach (var prelevelranged in preProject.script.LevelRangedList)
+                {
+                    if (TryLoadLevel((prelevelranged.origin, prelevelranged.name), out ECMLevel level))
+                    {
+                        imshiLevelRangedList.Add((prelevelranged.lv, level));
+                    }
+                }
+
+                bool TryLoadLevel((double origin, string name) prelevel, out ECMLevel level)
+                {
+                    level = new ECMLevel();
                     bool ok = true;
 
-                    if (preProject.script.NameDic.TryGetValue(name, out string fixedname))
+                    if (preProject.script.NameDic.TryGetValue(prelevel.name, out string fixedname))
                     {
 
                         level.name = fixedname;
                         if (preProject.Images.TryGetValue(fixedname, out Image image))
                         {
                             level.image = image;
-                            level.originlv = originlv;
+                            level.originlv = prelevel.origin;
                         }
                         else
                         {
                             ok = false;
-                            Log.Warning($"{name} 이미지가 없음.");
+                            Log.Warning($"{prelevel.name} 이미지가 없음.");
                             //throw new ImageNotFoundException(fixedname);
                         }
 
@@ -52,17 +68,13 @@ namespace ECMBase
                     else
                     {
                         ok = false;
-                        Log.Warning($"{name} 이름이 없음.");
+                        Log.Warning($"{prelevel.name} 이름이 없음.");
                         //throw new NameNotFoundException(name);
                     }
-
-                    if(ok)
-                        pll.Add((lv,level));
+                    return ok;
                 }
-
-
-
-                foreach (var (lv, level) in pll)
+                
+                foreach (var (lv, level) in imshiLevelList)
                 {
                     if (project.LevelList.ContainsKey(lv))
                     {
@@ -73,6 +85,18 @@ namespace ECMBase
                         project.LevelList.Add(lv, new List<ECMLevel>(32) { level });
                     }
                 }
+                foreach (var (lvranged, level) in imshiLevelRangedList)
+                {
+                    if (project.LevelRangedList.ContainsKey(lvranged))
+                    {
+                        project.LevelRangedList[lvranged].Add(level);
+                    }
+                    else
+                    {
+                        project.LevelRangedList.Add(lvranged, new List<ECMLevel>(32) { level });
+                    }
+                }
+
             }
 
 

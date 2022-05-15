@@ -177,15 +177,31 @@ namespace ECMBase
                                 break;
 
                             case State.NAME:
-                                BStacks.ForEach((str) => str = str.ToLower());
-                                script.NameDic.Add(string.Concat(BStacks).ToLower(), AStacks[0]);
-
+                                script.NameDic.Add
+                                    (
+                                    string.Concat(BStacks).ToLower(),
+                                    AStacks[0]
+                                    );
                                 break;
 
                             case State.LEVEL:
-                                BStacks.ForEach((str) => str = str.ToLower());
-                                script.LEVELList.Add((double.Parse(AStacks[0]), double.Parse(BStacks[0]), string.Concat(BStacks.Skip(1)).ToLower()));
+                                script.LevelList.Add
+                                    ((
+                                    double.Parse(AStacks[0]),
+                                    double.Parse(BStacks[0]),
+                                    string.Concat(BStacks.Skip(1)).ToLower()
+                                    ));
                                 break;
+
+                            case State.LEVELRANGE:
+                                script.LevelRangedList.Add
+                                    ((
+                                    (double.Parse(AStacks[0]), double.Parse(AStacks[0])),
+                                    double.Parse(BStacks[0]),
+                                    string.Concat(BStacks.Skip(1)).ToLower()
+                                    ));
+                                break;
+
                         }
 
 
@@ -195,7 +211,7 @@ namespace ECMBase
 
                     case (string op, _, SmallState.LineEnd or SmallState.Normal):
 
-                        BStacks.Add(op);
+                        BStacks.Add(op.ToLower());
                         break;
 
                     default:
@@ -238,7 +254,9 @@ namespace ECMBase
 
     public class PreECMScript
     {
-        public List<(double level, double origin, string name)> LEVELList = new();
+        public List<PreECMLevel> LevelList = new();
+
+        public List<PreECMLevelRanged> LevelRangedList = new();
 
         public Dictionary<string, string> NameDic = new();
 
@@ -248,7 +266,7 @@ namespace ECMBase
             PreECMScript origin = new PreECMScript();
             foreach (var script in scripts)
             {
-                origin.LEVELList.AddRange(script.LEVELList);
+                origin.LevelList.AddRange(script.LevelList);
 
                 foreach (var pair in script.NameDic)
                 {
@@ -259,13 +277,29 @@ namespace ECMBase
         }
     }
 
-
-
-    public class PreECMLevel
+    public record struct PreECMLevel(double lv, double origin, string name)
     {
-        public string name;
-        public double level;
+        public static implicit operator (double level, double origin, string name)(PreECMLevel value)
+        {
+            return (value.lv, value.origin, value.name);
+        }
+
+        public static implicit operator PreECMLevel((double lv, double origin, string name) value)
+        {
+            return new PreECMLevel(value.lv, value.origin, value.name);
+        }
     }
 
+    public record struct PreECMLevelRanged(DoubleRanged lv, double origin, string name)
+    {
+        public static implicit operator (DoubleRanged lv, double origin, string name)(PreECMLevelRanged value)
+        {
+            return (value.lv, value.origin, value.name);
+        }
 
+        public static implicit operator PreECMLevelRanged((DoubleRanged lv, double origin, string name) value)
+        {
+            return new PreECMLevelRanged(value.lv, value.origin, value.name);
+        }
+    }
 }
