@@ -119,18 +119,26 @@ namespace ECMBase
                         {
                             case ("LABEL", 1):
                                 state = State.LABEL;
-                                sms = SmallState.LineEnd;
-                                ACount = 0;
-                                break;
+                                goto LineEnd;
 
                             case ("LEVEL", 2):
                                 state = State.LEVEL;
-                                sms = SmallState.EndedReadingA;
-                                ACount--;
-                                break;
+                                goto EndedReadingA;
 
                             case ("NAME", 2):
                                 state = State.NAME;
+                                goto EndedReadingA;
+
+                            case ("LEVELRANGE", 3):
+                                state = State.LEVELRANGE;
+                                goto EndedReadingA;
+
+                            LineEnd:
+                                sms = SmallState.LineEnd;
+                                ACount=0;
+                                break;
+
+                            EndedReadingA:
                                 sms = SmallState.EndedReadingA;
                                 ACount--;
                                 break;
