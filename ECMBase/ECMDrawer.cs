@@ -179,6 +179,9 @@ namespace ECMBase
 
         public class STATEMAP
         {
+            const int MAX_SIZE = 256;
+
+
             STATE[,] map;
             ECMProject project;
 
@@ -236,7 +239,7 @@ namespace ECMBase
             }
             public void Reset()
             {
-                this.map = new STATE[256, 256];
+                this.map = new STATE[MAX_SIZE, MAX_SIZE];
                 for (int i = 0; i < map.GetLength(0); i++)
                 {
                     for (int j = 0; j < map.GetLength(1); j++)
@@ -244,7 +247,7 @@ namespace ECMBase
                         map[i, j] = new STATE.NULL();
                     }
                 }
-                lvs = new double[256];
+                lvs = new double[MAX_SIZE];
             }
 
             void StackProject(ECMProject project)
@@ -294,6 +297,47 @@ namespace ECMBase
             }
 
 
+            void StackRanged(DoubleRanged lvranged, List<ECMLevel> levels)
+            {
+                int y1 = -1, y2 = -1;
+                {
+                    
+                    for (int i = 0; i < lvs.Count(); i++)
+                    {
+                        if (lvranged.left == lvs[i]) y1 = i;
+                        if (lvranged.right == lvs[i]) y2 = i;
+                    }
+                }
+
+                foreach (ECMLevel level in levels)
+                {
+                    for (int x = 0; x < MAX_SIZE; x++)
+                    {
+                        if (IsEnoughSpace(x, y1, y2))
+                        {
+                            FillState(level, new Point(x,y1), new Point(x,y2));
+                        }
+                    }
+                }
+            }
+            bool IsEnoughSpace(int x, int y1, int y2)
+            {
+                for (int i = y1; i < y2+1; i++)
+                {
+                    switch(map[x,i])
+                    {
+                        case STATE.EMPTY:
+                        case STATE.NULL:
+                            return false;
+                    }
+                }
+                return true;
+            }
+
+            void FillState(ECMLevel level, Point p1, Point p2)
+            {
+                throw new NotImplementedException();
+            }
         }
         public interface STATE
         {

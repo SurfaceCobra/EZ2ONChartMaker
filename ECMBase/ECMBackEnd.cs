@@ -22,7 +22,7 @@ namespace ECMBase
     }
 
 
-public class ECMProject
+    public class ECMProject
     {
         public Dictionary<double, List<ECMLevel>> LevelList;
         public Dictionary<DoubleRanged, List<ECMLevel>> LevelRangedList;
