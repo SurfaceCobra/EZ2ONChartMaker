@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Text;
 
 namespace ECMBase
 {
@@ -122,7 +123,7 @@ namespace ECMBase
                 }
             }
 
-            return new StackableImage(bitmap,new Rectangle(0,0,drawer.MAX_WIDTH,drawer.MAX_HEIGHT), 0);
+            return new StackableImage(bitmap,new Rectangle(0,0,drawer.MAX_WIDTH,drawer.MAX_HEIGHT), -1);
         }
     }
 
@@ -179,35 +180,58 @@ namespace ECMBase
 
         public class STATEMAP
         {
-            const int MAX_SIZE = 256;
+            const int MAX_SIZE = 24;
 
 
             STATE[,] map;
             ECMProject project;
 
 
-            public int Height= int.MinValue;
-            public int Width=int.MinValue;
+            public int Height = int.MinValue;
+            public int Width = int.MinValue;
 
             public int Gapless;
 
             public double[] lvs;
 
 
-
-            /*
-            public IEnumerable<STATE> GetXLines(int y, out int index)
+            public override string ToString()
             {
-                for(index=0;index<Width;index++)
+                StringBuilder sb = new StringBuilder();
+
+                for (int y = 0; y < MAX_SIZE; y++)
                 {
-                    yield return map[index, y];
+                    for (int x = 0; x < MAX_SIZE; x++)
+                    {
+                        string str = "·";
+                        switch (map[x, y])
+                        {
+                            case STATE.NULL:
+                                str = "·";
+                                break;
+                            case STATE.EMPTY:
+                                str = "·";
+                                break;
+                            case STATE.LEVEL:
+                                str = "■";
+                                break;
+                            case STATE.LEVELRANGED:
+                                str = "★";
+                                break;
+                            case STATE.MARGIN:
+                                str = "□";
+                                break;
+                        }
+
+                        sb.Append($"{str} ");
+                    }
+                    sb.AppendLine();
                 }
-                yield break;
+
+                return sb.ToString();
             }
-            */
 
-
-            public STATE this[int x,int y]
+            public STATE this[int x, int y]
             {
                 get
                 {
@@ -215,7 +239,7 @@ namespace ECMBase
                 }
                 set
                 {
-                    this.map[x,y] = value;
+                    this.map[x, y] = value;
                 }
             }
 
@@ -252,17 +276,37 @@ namespace ECMBase
 
             void StackProject(ECMProject project)
             {
+
                 StackLevels(project.LevelList);
+
+
+                for(int y=0;y<Height;y++)
+                {
+                    for(int x=0;x< project.option.divider.MAXBOXCOUNT; x++)
+                    {
+                        switch(map[x,y])
+                        {
+                            case STATE.EMPTY:
+                            case STATE.NULL:
+                                map[x, y] = new STATE.MARGIN();
+                                break;
+                        }
+                    }
+                }
+
+                StackRangedLevels(project.LevelRangedList);
+                GetWidth();
             }
 
             void StackLevels(Dictionary<double, List<ECMLevel>> levelList)
             {
-                foreach(var level in levelList)
+                foreach (var level in levelList)
                 {
                     StackLine(level.Key, level.Value);
                 }
-            }
 
+
+            }
             void StackLine(double lv, List<ECMLevel> levels)
             {
                 int currenty = 0;
@@ -283,6 +327,7 @@ namespace ECMBase
 
                 int realy = Height;
                 int realx;
+
                 for (int x = 0; x < xcount; x++)
                 {
                     realx = x % MAXBOXCOUNT;
@@ -292,22 +337,38 @@ namespace ECMBase
                     lvs[realy] = lv;
                 }
 
-                Height = realy+1;
-                Width = Math.Max(Math.Min(levels.Count(),MAXBOXCOUNT), Width);
+                Height = realy + 1;
+                Width = Math.Max(Math.Min(levels.Count(), MAXBOXCOUNT), Width);
+
+
+                //코드 고쳐야함
             }
 
 
-            void StackRanged(DoubleRanged lvranged, List<ECMLevel> levels)
+
+            void StackRangedLevels(Dictionary<DoubleRanged, List<ECMLevel>> levelRangedList)
             {
-                int y1 = -1, y2 = -1;
+                foreach (var levelranged in levelRangedList)
                 {
-                    
+                    StackRangedLine(levelranged.Key, levelranged.Value);
+                }
+
+
+            }
+            void StackRangedLine(DoubleRanged lvranged, List<ECMLevel> levels)
+            {
+                int ay1 = -1, ay2 = -1;
+                {
+
                     for (int i = 0; i < lvs.Count(); i++)
                     {
-                        if (lvranged.left == lvs[i]) y1 = i;
-                        if (lvranged.right == lvs[i]) y2 = i;
+                        if (lvranged.left == lvs[i]) ay1 = i;
+                        if (lvranged.right == lvs[i]) ay2 = i;
                     }
                 }
+
+                int y1 = Math.Min(ay1, ay2);
+                int y2 = Math.Max(ay1, ay2);
 
                 foreach (ECMLevel level in levels)
                 {
@@ -315,28 +376,68 @@ namespace ECMBase
                     {
                         if (IsEnoughSpace(x, y1, y2))
                         {
-                            FillState(level, new Point(x,y1), new Point(x,y2));
+                            FillState(new STATE.LEVELRANGED(level), x, y1, x, y2);
+                            break;
                         }
                     }
                 }
             }
             bool IsEnoughSpace(int x, int y1, int y2)
             {
-                for (int i = y1; i < y2+1; i++)
+                for (int i = y1; i < y2 + 1; i++)
                 {
-                    switch(map[x,i])
+                    if (x < 0 || i < 0 || x > MAX_SIZE || i > Height)
+                        return false;
+
+                    switch (map[x, i])
                     {
                         case STATE.EMPTY:
                         case STATE.NULL:
+                            break;
+
+                        default:
                             return false;
                     }
                 }
                 return true;
             }
-
-            void FillState(ECMLevel level, Point p1, Point p2)
+            void FillState(STATE state, int x1, int y1, int x2, int y2)
             {
-                throw new NotImplementedException();
+                for (int i = x1; i < x2 + 1; i++)
+                {
+                    for (int j = y1; j < y2 + 1; j++)
+                    {
+                        map[i, j] = state;
+                    }
+                }
+            }
+
+
+            void GetWidth()
+            {
+                for (int x = 0; x < MAX_SIZE; x++)
+                {
+                    bool ok = false;
+                    for (int y = 0; y < MAX_SIZE; y++)
+                    {
+                        switch (map[x, y])
+                        {
+                            case STATE.NULL:
+                            case STATE.EMPTY:
+                                break;
+                            default:
+                                ok = true;
+                                break;
+                        }
+                        if (ok) break;
+                    }
+                    if (ok == false)
+                    {
+                        this.Width = x;
+                        return;
+                    }
+                }
+                this.Width = MAX_SIZE;
             }
         }
         public interface STATE
@@ -346,6 +447,10 @@ namespace ECMBase
 
             }
             public class EMPTY : STATE
+            {
+
+            }
+            public class MARGIN : STATE
             {
 
             }
@@ -367,18 +472,7 @@ namespace ECMBase
                     this.data = data;
                 }
             }
-            public class LEVELRANGEDLEG : STATE
-            {
 
-            }
-            public class LEVELRANGEDTOP : STATE
-            {
-
-            }
-            public class LEVELRANGEDBOTTOM : STATE
-            {
-
-            }
         }
 
         public Image Draw(ECMProject project)
@@ -456,7 +550,7 @@ namespace ECMBase
 
                     
                 }
-
+                yCoverAxisList.Add(currenty + BOXSIZE);
                 YLINEAXIS = yLineAxisList.ToArray();
                 YCOVERAXIS = yCoverAxisList.ToArray();
             }
@@ -479,19 +573,97 @@ namespace ECMBase
             {
                 for(int x=0;x<TETRIS.Width;x++)
                 {
-                    int x2 = LEFTGAP + (x * (BOXSIZE + BOXWIDTHGAP));
-                    int y2 = YCOVERAXIS[y];
 
-                    switch(TETRIS[x,y])
+                    int xaxis(int x) => LEFTGAP + (x * (BOXSIZE + BOXWIDTHGAP));
+                    int yaxis(int y) => YCOVERAXIS[y];
+
+                    switch (TETRIS[x, y])
                     {
                         case STATE.EMPTY:
                         case STATE.NULL:
+                        case STATE.MARGIN:
                             break;
 
                         case STATE.LEVEL level:
                             var w = level.data.SelfDraw(this);
-                            w.rect = new Rectangle(x2, y2, BOXSIZE, BOXSIZE);
+                            w.rect = new Rectangle(xaxis(x), yaxis(y), BOXSIZE, BOXSIZE);
                             drawStack.Add(w);
+                            break;
+
+                        case STATE.LEVELRANGED levelranged:
+
+                            if (CheckIsTop())
+                            {
+                                int count = CheckTailCount();
+
+                                var ww = levelranged.data.SelfDraw(this);
+                                ww.rect = new Rectangle
+                                    (
+                                        xaxis(x),
+                                        (yaxis(GetHighestSameLevelY(y)) + yaxis(y+count))/2,
+                                        BOXSIZE,
+                                        BOXSIZE
+                                    );
+
+                                drawStack.Add(ww);
+                                drawStack.Add(GetLegDrawing());
+
+                                StackableImage GetLegDrawing()
+                                {
+                                    Pen pineapple = new Pen(Color.Black, 3);
+                                    int height = yaxis(y + count+1) - yaxis(GetHighestSameLevelY(y));
+                                    Bitmap bitmap = new Bitmap(BOXSIZE, height);
+                                    using(Graphics canvas = Graphics.FromImage(bitmap))
+                                    {
+                                        const int B = 5;
+                                        canvas.DrawLine(pineapple, B,B, BOXSIZE-B, B);
+                                        canvas.DrawLine(pineapple, B, height-B, BOXSIZE - B, height-B);
+                                        canvas.DrawLine(pineapple, BOXSIZE/2, B, BOXSIZE/2, height-B);
+                                    }
+                                    return new StackableImage(bitmap, new Rectangle
+                                        (
+                                        xaxis(x),
+                                        yaxis(GetHighestSameLevelY(y)),
+                                        BOXSIZE,
+                                        height
+                                        ), -1);
+                                }
+                            }
+                            bool CheckIsTop()
+                            {
+                                if(y>0)
+                                {
+                                    if(levelranged == TETRIS[x,y-1])
+                                    {
+                                        return false;
+                                    }
+                                }
+                                return true;
+                            }
+                            int CheckTailCount()
+                            {
+                                int i = y+1;
+                                for(;i<TETRIS.Height; i++)
+                                {
+                                    if (levelranged != TETRIS[x, i])
+                                    {
+                                        return i-y-1;
+                                    }
+                                }
+                                return i - y - 1;
+                            }
+                            int GetHighestSameLevelY(int originy)
+                            {
+                                if (originy == 0) return 0;
+                                double lv = LEFTLEVELS[originy];
+                                for(int i=0;i<LEFTLEVELS.Count();i++)
+                                {
+                                    if (LEFTLEVELS[i] == lv) return i;
+                                }
+                                throw new Exception("??????");
+                            }
+
+
                             break;
 
                         default:
@@ -512,7 +684,7 @@ namespace ECMBase
 
             //drawStack 전부 쌓고나서 그리기 시작
             drawStack.Sort((left, right) => left.height < right.height ? -1 : 1);
-            drawStack.Reverse();
+            //drawStack.Reverse();
             using (Graphics canvas = Graphics.FromImage(output))
             {
                 foreach (var tuple in drawStack)

@@ -196,7 +196,7 @@ namespace ECMBase
                             case State.LEVELRANGE:
                                 script.LevelRangedList.Add
                                     ((
-                                    (double.Parse(AStacks[0]), double.Parse(AStacks[0])),
+                                    (double.Parse(AStacks[0]), double.Parse(AStacks[1])),
                                     double.Parse(BStacks[0]),
                                     string.Concat(BStacks.Skip(1)).ToLower()
                                     ));
@@ -267,6 +267,7 @@ namespace ECMBase
             foreach (var script in scripts)
             {
                 origin.LevelList.AddRange(script.LevelList);
+                origin.LevelRangedList.AddRange(script.LevelRangedList);
 
                 foreach (var pair in script.NameDic)
                 {

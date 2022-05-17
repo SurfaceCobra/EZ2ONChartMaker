@@ -56,33 +56,8 @@
 18 DataErr0r;
 
 
+@@@LEVELRANGE 18 19
+18 Brain Power;
 
-@@@LEVELRANGE 23 20
-19 Zeroize;
-
-@@@LEVELRANGE 19 18
-18 Engine;
-
-@@@LEVELRANGE 21 18
-20 Encounter on orbit;
-
-@@@LEVELRANGE 23 22
-20 Kamui;
-18 TRPNO;
-
-
-@@@LEVELRANGE 21 20
-19 INFINITY;
-
-
-@@@LEVELRANGE 19 18
-18 20000000000;
-
-
-@@@LEVELRANGE 23 22
-18 MAX301;
-
-@@@LEVELRANGE 20 19
-19 Fire Storm;
 
 

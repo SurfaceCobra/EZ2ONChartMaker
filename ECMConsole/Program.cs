@@ -12,7 +12,7 @@ namespace ECMConsole
             Console.WriteLine("Hello World!");
 
             //Console.WriteLine(Math.Ceiling((double)1/8));
-
+            //loadpreproject();
             SaveImage();
         }
 
@@ -33,7 +33,7 @@ namespace ECMConsole
             image.Save(outputpath);
         }
 
-        static void loadproject()
+        static void loadpreproject()
         {
             string path = @"C:\Users\whitelava3203\source\repos\EZ2ONChartMaker\ECM\project\8k슈랜클리어";
 
