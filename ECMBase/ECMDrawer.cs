@@ -66,7 +66,7 @@ namespace ECMBase
         public int BOXWIDTHGAP = 4;
 
         //아직안만듬
-        public int MAXBOXCOUNT = 5;
+        public int MAXBOXCOUNT = 13;
 
         //아직안만듬
         public TextBase COVEROVERLAY1;
@@ -472,6 +472,15 @@ namespace ECMBase
                     this.data = data;
                 }
             }
+
+        }
+
+
+        public class AXISMAP
+        {
+            STATEMAP Tetris;
+            ECMDivider divider;
+
 
         }
 
