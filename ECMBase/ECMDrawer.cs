@@ -178,6 +178,10 @@ namespace ECMBase
             public StackableImage SelfDraw(ECMDrawer drawer);
         }
 
+        
+
+
+
         public class STATEMAP
         {
             const int MAX_SIZE = 24;
@@ -483,6 +487,9 @@ namespace ECMBase
 
 
         }
+
+
+        
 
         public Image Draw(ECMProject project)
         {

@@ -1,6 +1,6 @@
 ﻿
 
-
+using ECMBase;
 using System.Drawing;
 
 namespace ECMConsole
@@ -13,7 +13,22 @@ namespace ECMConsole
 
             //Console.WriteLine(Math.Ceiling((double)1/8));
             //loadpreproject();
-            SaveImage();
+            //SaveImage();
+            MapTest();
+        }
+
+
+        static void MapTest()
+        {
+            SuperMap<int?> smap = new SuperMap<int?>();
+            smap.SetAt(new Point(1,3), 112233);
+            smap.SetAt(new Point(-2, -7), 15543);
+
+            //var v = smap.IndexOf(112233);
+
+            int? val = smap.GetAt(new Point(1,3));
+
+            Console.WriteLine();
         }
 
         static void SaveImage()
