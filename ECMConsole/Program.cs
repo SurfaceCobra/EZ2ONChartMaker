@@ -14,19 +14,37 @@ namespace ECMConsole
             //Console.WriteLine(Math.Ceiling((double)1/8));
             //loadpreproject();
             //SaveImage();
-            MapTest();
+            MapTest2();
         }
 
 
         static void MapTest()
         {
-            SuperMap<int?> smap = new SuperMap<int?>();
-            smap.SetAt(new Point(1,3), 112233);
-            smap.SetAt(new Point(-2, -7), 15543);
+            GridMapBuilder<int?> mapbuilder = new GridMapBuilder<int?>();
 
-            //var v = smap.IndexOf(112233);
+            mapbuilder.SetAt(new Point(1,3), 6974);
+            mapbuilder.SetAt(new Point(-2, -7), 3203);
 
-            int? val = smap.GetAt(new Point(1,3));
+            GridMap<int?> map = mapbuilder.ToMap();
+            int? val = mapbuilder.GetAt(new Point(1, 3));
+            int? val2 =  map.GetAt(new Point(1, 3));
+
+            Console.WriteLine(val??-1);
+            Console.WriteLine(val2??-1);
+
+        }
+
+        static void MapTest2()
+        {
+            PuzzleMapBuilder<int?> puzzlebuilder = new PuzzleMapBuilder<int?>();
+            for (int i = 0; i < 5; i++)
+            {
+                GridMapBuilder<int?> builder = new GridMapBuilder<int?>();
+
+                DT.Filler(new Rectangle(0, 0, 3, 4)).ForEach((v) => builder.SetAt(v, i));
+
+                puzzlebuilder.StackMap(builder.ToBlockMap(new Point(1, 1)));
+            }
 
             Console.WriteLine();
         }

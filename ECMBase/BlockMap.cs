@@ -8,7 +8,65 @@ using System.Threading.Tasks;
 
 namespace ECMBase
 {
-    public class SuperMap<T>
+
+    public abstract class GridMapBase<T>
+    {
+
+        public abstract Rectangle rect { get; }
+
+        public T? GetAt(Point pos)
+        {
+            if (rect.ContainsBoundary(pos))
+                return _GetAt(pos.X - rect.X, pos.Y - rect.Y);
+            else return default;
+        }
+        public bool IsNullorDefault(Point pos) => GetAt(pos) == null;
+
+        public Point IndexOf(T item)
+        {
+            foreach (Point p in DT.Filler(rect))
+            {
+                if (GetAt(p).Equals(item)) return p;
+            }
+            return default;
+        }
+        public IEnumerable<T> ValuesByPositions(IEnumerable<Point> poss)
+        {
+            foreach (Point pos in poss)
+            {
+                yield return GetAt(pos);
+            }
+            yield break;
+        }
+        public IEnumerable<T> ValuesByY(int y) => ValuesByPositions(DT.Mover(DT.Right, rect.Height).ToPositions(new Point(0, y)));
+        public IEnumerable<T> ValuesByX(int x) => ValuesByPositions(DT.Mover(DT.Down, rect.Width).ToPositions(new Point(x, 0)));
+
+
+        protected abstract T _GetAt(int x, int y);
+    }
+
+    public class GridMap<T> : GridMapBase<T>
+    {
+        ReadOnlyCollection<ReadOnlyCollection<T>> map { get; init; }
+        Rectangle _rect;
+        public override Rectangle rect => _rect;
+
+
+
+        public GridMap(IList<IList<T>> basemap, Rectangle rect)
+        {
+            this._rect = rect;
+            List<ReadOnlyCollection<T>> clist = new List<ReadOnlyCollection<T>>();
+            foreach(var v in basemap)
+            {
+                clist.Add(new ReadOnlyCollection<T>(v));
+            }
+            this.map = new ReadOnlyCollection<ReadOnlyCollection<T>>(clist);
+        }
+
+        protected override T _GetAt(int x, int y) => map[y][x];
+    }
+    public class GridMapBuilder<T> : GridMapBase<T>
     {
         ObservableCollection<ObservableCollection<T>> map;
 
@@ -25,20 +83,13 @@ namespace ECMBase
         }
 
         Rectangle _rect;
-        Rectangle rect => _rect;
+        public override Rectangle rect => _rect;
 
-        public SuperMap()
+        public GridMapBuilder()
         {
             map = new ObservableCollection<ObservableCollection<T>>();
             map.Add(GetRow());
             _rect = new Rectangle(0, 0, 0, 0);
-        }
-
-        public T GetAt(Point pos)
-        {
-            if (rect.ContainsBoundary(pos))
-                return map[pos.Y- rect.Y][pos.X- rect.X];
-            else return default;
         }
 
         public void SetAt(Point pos, T value)
@@ -57,7 +108,6 @@ namespace ECMBase
         public void RemoveAt(Point pos)
         {
             SetAt(pos,default);
-
         }
 
         void Extend(Size direction, int count)
@@ -97,14 +147,7 @@ namespace ECMBase
         }
 
 
-        public Point IndexOf(T item)
-        {
-            foreach(Point p in DT.Filler(rect))
-            {
-                if (GetAt(p).Equals(item)) return p;
-            }
-            return default;
-        }
+
 
         public T[,] ToArray()
         {
@@ -115,112 +158,39 @@ namespace ECMBase
             }
             return arraymap;
         }
-    }
-
-    public class StackedBlockMap<T>
-    {
-        List<(Size offset, BlockMap<T> map)> stackedmap;
-
-        public int StackMap(BlockMap<T> map) => StackMap(map, new Size(0,0));
-        public int StackMap(BlockMap<T> map, Size offset)
+        public GridMap<T> ToMap()
         {
-            this.stackedmap.Add((offset,map));
-            return stackedmap.Count-1;
+            return new GridMap<T>(this.map.Cast<IList<T>>().ToArray(), this.rect);
         }
 
-        public IEnumerable<T> XRay(Point pos)
+        public BlockMap<T> ToBlockMap(Point middle)
         {
-            foreach((Size offset, BlockMap<T> map) in stackedmap)
-            {
-                yield return map.GetAt(pos+offset);
-            }
-            yield break;
+            return new BlockMap<T>(this.map.Cast<IList<T>>().ToArray(), this.rect, middle);
         }
 
-        public void Move(int index, Size offset)
+        protected override T _GetAt(int x, int y)
         {
-            var tuple = stackedmap[index];
-            tuple.offset += offset;
+            return map[y][x];
         }
     }
-    public record class BlockMap<T>
+
+
+
+    public class BlockMap<T> : GridMap<T>
     {
         public Point middle { get; init; }
-        public T[,] map { get; init; }
-        public BlockMap(Point middle, T[,] map)
+        public BlockMap(IList<IList<T>> basemap, Rectangle rect, Point middle) : base(basemap, rect)
         {
             this.middle = middle;
-            this.map = map;
-        }
-
-
-
-        public T GetAt(Point pos) => map[pos.X,pos.Y];
-        public void SetAt(T data, Point pos) => map[pos.X,pos.Y] = data;
-
-    }
-    public class BlockBuilder<T> : SuperMap<T>
-    {
-        public Point middle;
-
-        public Point currentPos;
-
-        public BlockBuilder() : base()
-        {
-
-            middle = new Point(0,0);
-            currentPos = new Point(0,0);
-
-        }
-        public IEnumerable<T> ValuesByPosition(IEnumerable<Point> poss)
-        {
-            foreach(Point pos in poss)
-            {
-                yield return GetAt(pos);
-            }
-            yield break;
-        }
-        public IEnumerable<T> ValuesByOffset(Point home, IEnumerable<Size> offsets)
-        {
-            Point newhome = home;
-            foreach (Size offset in offsets)
-            {
-                home += offset;
-                yield return GetAt(newhome);
-            }
-            yield break;
-        }
-
-        public IEnumerable<T> ValuesByY(int y) => ValuesByOffset(new Point(0, y), DT.Mover(DT.Right,MAX_SIZE));
-        public IEnumerable<T> ValuesByX(int x) => ValuesByOffset(new Point(x, 0), DT.Mover(DT.Down,MAX_SIZE));
-
-
-        public void Move(Size offset)
-        {
-            currentPos += offset;
-        }
-        public void Set(T data) => SetAt(data, currentPos);
-        public void MoveSet(T data, Size offset)
-        {
-            Move(offset);
-            Set(data);
-        }
-
-        public BlockMap<T> GetBlockMap()
-        {
-
-            return new BlockMap<T>(middle, Trim());
         }
     }
 
 
-    public class PuzzleMap<T>
+    public class PuzzleMap<T> : GridMapBase<T>
     {
-        public void TryStackBlock(BlockMap<T> block, Point starting, IEnumerator<Size> mover)
-        {
+        public override Rectangle rect => throw new NotImplementedException();
 
-        }
-        public void TryStackBlock(BlockMap<T> block, IEnumerator<Point> location)
+        public void TryStackBlock(GridMap<T> block, IEnumerator<Point> location)
         {
 
         }
@@ -228,8 +198,102 @@ namespace ECMBase
         {
 
         }
-    }
 
+        protected override T _GetAt(int x, int y)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class PuzzleMapBuilder<T>
+    {
+
+        List<(Size offset, BlockMap<T> map)> puzzlemap;
+
+        Rectangle rect;
+
+        public PuzzleMapBuilder()
+        {
+            this.puzzlemap = new List<(Size offset, BlockMap<T> map)>();
+            this.rect = new Rectangle(0,0,0,0);
+        }
+
+        public int StackMap(BlockMap<T> map) => StackMap(map, new Size(0, 0));
+        public int StackMap(BlockMap<T> map, Size offset)
+        {
+            this.puzzlemap.Add((offset, map));
+            return puzzlemap.Count - 1;
+        }
+
+        public bool TryStackMap(BlockMap<T> map, IEnumerable<Size> offsets)
+        {
+            foreach(Size offset in offsets)
+            {
+                Size newoffset = offset - (Size)map.middle;
+                if(TryStackMap(map, newoffset))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool TryStackMap(BlockMap<T> map, Size offset)
+        {
+            var poss = DT.Filler(map.rect);
+
+            puzzlemap.Add((offset, map));
+
+            var b = IsPuzzled(poss);
+
+            if(!b) puzzlemap.RemoveAt(puzzlemap.Count-1);
+
+            return b;
+        }
+
+        public IEnumerable<T> XRay(Point pos)
+        {
+            foreach ((Size offset, GridMapBase<T> map) in puzzlemap)
+            {
+                yield return map.GetAt(pos + offset);
+            }
+            yield break;
+        }
+
+        public bool IsPuzzled(IEnumerable<Point> poss)
+        {
+            foreach(Point pos in poss)
+            {
+                if (!IsPuzzled(pos))
+                    return false;
+            }
+            return true;
+        }
+        public bool IsPuzzled(Point pos)
+        {
+            bool isConquered = false;
+            foreach ((var offset, var mapcomp) in puzzlemap)
+            {
+                if (!mapcomp.IsNullorDefault(pos))
+                {
+                    if(isConquered)
+                        return false;
+                    isConquered = true;
+                }
+            }
+            return true;
+        }
+
+        public void Move(int index, Size offset)
+        {
+            var tuple = puzzlemap[index];
+            tuple.offset += offset;
+        }
+
+        public void GetPuzzleMap()
+        {
+
+        }
+    }
 
 
     public static class DT
@@ -316,8 +380,16 @@ namespace ECMBase
         public static Size Enlarge(Size size) => Enlarge(size,1);
 
 
-
-
+        public static IEnumerable<Point> OffsetToPosition(IEnumerable<Size> offsets, Point home)
+        {
+            Point mover = home;
+            foreach(Size offset in offsets)
+            {
+                mover += offset;
+                yield return mover;
+            }
+            yield break;
+        }
     }
     public static class DTExtensionMethod
     {
@@ -347,6 +419,20 @@ namespace ECMBase
                 point.X >= rect.Left &&
                 point.Y <= rect.Bottom &&
                 point.Y >= rect.Top;
+        }
+
+        public static IEnumerable<Point> ToPositions(this IEnumerable<Size> offsets, Point home) => DT.OffsetToPosition(offsets, home);
+    }
+
+
+    public static class ExtensionMethod
+    {
+        public static void ForEach<T>(this IEnumerable<T> values, Action<T> action)
+        {
+            foreach(var v in values)
+            {
+                action(v);
+            }
         }
     }
 }
