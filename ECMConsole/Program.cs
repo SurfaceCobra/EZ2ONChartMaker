@@ -18,15 +18,28 @@ namespace ECMConsole
         }
 
 
-        static void MapTest()
+        static void RectTest()
+        {
+            Rectangle rect = new Rectangle(0,0,4,5);
+            Point p = new Point(9,15);
+
+            var v = DT.Distance(rect, p);
+
+            Console.WriteLine(v);
+        }
+
+        static void MapTest1()
         {
             GridMapBuilder<int?> mapbuilder = new GridMapBuilder<int?>();
 
             mapbuilder.SetAt(new Point(1,3), 6974);
+
+            Log.Message("////");
+
             mapbuilder.SetAt(new Point(-2, -7), 3203);
 
             GridMap<int?> map = mapbuilder.ToMap();
-            int? val = mapbuilder.GetAt(new Point(1, 3));
+            int? val = mapbuilder.GetAt(new Point(-2, -7));
             int? val2 =  map.GetAt(new Point(1, 3));
 
             Console.WriteLine(val??-1);
@@ -43,7 +56,9 @@ namespace ECMConsole
 
                 DT.Filler(new Rectangle(0, 0, 3, 4)).ForEach((v) => builder.SetAt(v, i));
 
-                puzzlebuilder.StackMap(builder.ToBlockMap(new Point(1, 1)));
+                BlockMap<int?> blockmap = builder.ToBlockMap(new Size(i, i));
+
+                puzzlebuilder.StackMap(blockmap, new Size(i,i));
             }
 
             Console.WriteLine();

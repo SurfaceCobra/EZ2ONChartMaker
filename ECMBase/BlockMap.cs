@@ -110,23 +110,21 @@ namespace ECMBase
             SetAt(pos,default);
         }
 
-        void Extend(Size direction, int count)
-        {
-            for (int i = 0; i < count; i++) Extend(direction);
-        }
-
         void Extend(Size direction)
         {
             if(direction == DT.Up)
             {
+                Log.Message("Up");
                 map.Insert(0, GetRow());
             }
             else if(direction == DT.Down)
             {
+                Log.Message("Down");
                 map.Add(GetRow());
             }
             else if(direction == DT.Left)
             {
+                Log.Message("Left");
                 foreach (var v in map)
                 {
                     v.Insert(0, default);
@@ -134,6 +132,7 @@ namespace ECMBase
             }
             else if(direction == DT.Right)
             {
+                Log.Message("Right");
                 foreach (var v in map)
                 {
                     v.Add(default);
@@ -163,7 +162,7 @@ namespace ECMBase
             return new GridMap<T>(this.map.Cast<IList<T>>().ToArray(), this.rect);
         }
 
-        public BlockMap<T> ToBlockMap(Point middle)
+        public BlockMap<T> ToBlockMap(Size middle)
         {
             return new BlockMap<T>(this.map.Cast<IList<T>>().ToArray(), this.rect, middle);
         }
@@ -178,8 +177,8 @@ namespace ECMBase
 
     public class BlockMap<T> : GridMap<T>
     {
-        public Point middle { get; init; }
-        public BlockMap(IList<IList<T>> basemap, Rectangle rect, Point middle) : base(basemap, rect)
+        public Size middle { get; init; }
+        public BlockMap(IList<IList<T>> basemap, Rectangle rect, Size middle) : base(basemap, rect)
         {
             this.middle = middle;
         }
@@ -220,7 +219,7 @@ namespace ECMBase
         public int StackMap(BlockMap<T> map) => StackMap(map, new Size(0, 0));
         public int StackMap(BlockMap<T> map, Size offset)
         {
-            this.puzzlemap.Add((offset, map));
+            this.puzzlemap.Add((offset-map.middle, map));
             return puzzlemap.Count - 1;
         }
 
@@ -361,8 +360,30 @@ namespace ECMBase
 
         public static Size Distance(Rectangle rect, Point point)
         {
-            int xoffset = Math.Min(point.X - rect.Left, point.X - rect.Right);
-            int yoffset = Math.Min(point.Y - rect.Top, point.Y - rect.Bottom);
+            int left = rect.Left - point.X;
+            int right = point.X - rect.Right;
+            int top = rect.Top - point.Y;
+            int bottom = point.Y - rect.Bottom;
+
+            int xoffset = (left, right) switch
+            {
+                var (l, r) when l <= 0 && r <= 0 => 0,
+                var (l, r) when l >= 0 && r <= 0 => -left,
+                var (l, r) when l <= 0 && r >= 0 => right,
+                var (l, r) when l > 0 && r > 0 => throw new Exception("???????"),
+                var (_,_) => throw new Exception("??")
+            };
+            int yoffset = (top, bottom) switch
+            {
+                var (t, b) when t <= 0 && b <= 0 => 0,
+                var (t, b) when t >= 0 && b <= 0 => -top,
+                var (t, b) when t <= 0 && b >= 0 => bottom,
+                var (t, b) when t > 0 && b > 0 => throw new Exception("???????"),
+                var (_, _) => throw new Exception("??")
+            };
+
+            //int xoffset = Math.Min(point.X - rect.Left, point.X - rect.Right);
+            //int yoffset = Math.Min(point.Y - rect.Top, point.Y - rect.Bottom);
             return new Size(xoffset, yoffset);
         }
 
