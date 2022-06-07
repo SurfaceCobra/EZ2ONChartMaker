@@ -50,18 +50,19 @@ namespace ECMConsole
         static void MapTest2()
         {
             PuzzleMapBuilder<int?> puzzlebuilder = new PuzzleMapBuilder<int?>();
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 8; i++)
             {
                 GridMapBuilder<int?> builder = new GridMapBuilder<int?>();
 
                 DT.Filler(new Rectangle(0, 0, 3, 4)).ForEach((v) => builder.SetAt(v, i));
 
-                BlockMap<int?> blockmap = builder.ToBlockMap(new Size(i, i));
+                BlockMap<int?> blockmap = builder.ToBlockMap(new Size(1, 1));
 
-                puzzlebuilder.StackMap(blockmap, new Size(i,i));
+                bool b = puzzlebuilder.TryStackMap(blockmap, new Size(i,i));
+                //Console.WriteLine(b);
             }
 
-            Console.WriteLine();
+            Console.WriteLine(puzzlebuilder.IsPuzzled(new Point(29,29)));
         }
 
         static void SaveImage()

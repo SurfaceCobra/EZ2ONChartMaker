@@ -114,17 +114,17 @@ namespace ECMBase
         {
             if(direction == DT.Up)
             {
-                Log.Message("Up");
+                
                 map.Insert(0, GetRow());
             }
             else if(direction == DT.Down)
             {
-                Log.Message("Down");
+                ;
                 map.Add(GetRow());
             }
             else if(direction == DT.Left)
             {
-                Log.Message("Left");
+                
                 foreach (var v in map)
                 {
                     v.Insert(0, default);
@@ -132,7 +132,7 @@ namespace ECMBase
             }
             else if(direction == DT.Right)
             {
-                Log.Message("Right");
+                
                 foreach (var v in map)
                 {
                     v.Add(default);
@@ -216,19 +216,34 @@ namespace ECMBase
             this.rect = new Rectangle(0,0,0,0);
         }
 
-        public int StackMap(BlockMap<T> map) => StackMap(map, new Size(0, 0));
-        public int StackMap(BlockMap<T> map, Size offset)
+        public int ForceStackMap(BlockMap<T> map) => ForceStackMap(map, new Size(0, 0));
+        public int ForceStackMap(BlockMap<T> map, Size offset)
         {
             this.puzzlemap.Add((offset-map.middle, map));
+
+            ExtendCheck();
+
             return puzzlemap.Count - 1;
+        }
+
+        void ExtendCheck()
+        {
+            
+
+            int leftend = puzzlemap.Select((v) => v.offset.Width + v.map.rect.Left).Min();
+            int rightend = puzzlemap.Select((v) => v.offset.Width + v.map.rect.Right).Max();
+            int topend = puzzlemap.Select((v) => v.offset.Height + v.map.rect.Top).Min();
+            int bottomend = puzzlemap.Select((v) => v.offset.Height + v.map.rect.Bottom).Max();
+
+            this.rect = new Rectangle(leftend, topend, rightend -leftend, bottomend-topend);
+
         }
 
         public bool TryStackMap(BlockMap<T> map, IEnumerable<Size> offsets)
         {
             foreach(Size offset in offsets)
             {
-                Size newoffset = offset - (Size)map.middle;
-                if(TryStackMap(map, newoffset))
+                if(TryStackMap(map, offset))
                 {
                     return true;
                 }
@@ -238,11 +253,14 @@ namespace ECMBase
 
         public bool TryStackMap(BlockMap<T> map, Size offset)
         {
-            var poss = DT.Filler(map.rect);
+            
+            var poss = DT.Filler(DT.Add(map.rect,offset));
 
-            puzzlemap.Add((offset, map));
+            ForceStackMap(map, offset);
 
             var b = IsPuzzled(poss);
+
+            Log.Message(b.ToString());
 
             if(!b) puzzlemap.RemoveAt(puzzlemap.Count-1);
 
@@ -257,6 +275,8 @@ namespace ECMBase
             }
             yield break;
         }
+
+        public bool IsPuzzled() => IsPuzzled(DT.Filler(rect));
 
         public bool IsPuzzled(IEnumerable<Point> poss)
         {
@@ -280,6 +300,11 @@ namespace ECMBase
                 }
             }
             return true;
+        }
+
+        public void Watch()
+        {
+
         }
 
         public void Move(int index, Size offset)
@@ -400,6 +425,12 @@ namespace ECMBase
         }
         public static Size Enlarge(Size size) => Enlarge(size,1);
 
+        public static Rectangle Add(Rectangle rect, Size offset)
+        {
+            Rectangle rect2 = rect;
+            rect2.Offset((Point)offset);
+            return rect2;
+        }
 
         public static IEnumerable<Point> OffsetToPosition(IEnumerable<Size> offsets, Point home)
         {

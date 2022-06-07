@@ -12,6 +12,7 @@ namespace ECMBase
         {
             Console.WriteLine(str);
         }
+        public static void Message(object? str) => Console.WriteLine(str);
 
         public static void Warning(string str)
         {
