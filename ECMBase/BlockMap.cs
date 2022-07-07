@@ -16,11 +16,17 @@ namespace ECMBase
 
         public T? GetAt(Point pos)
         {
+
             if (rect.ContainsBoundary(pos))
                 return _GetAt(pos.X - rect.X, pos.Y - rect.Y);
             else return default;
         }
-        public bool IsNullorDefault(Point pos) => GetAt(pos) == null;
+        public bool IsNullorDefault(Point pos)
+        {
+            bool b = GetAt(pos) == null;
+            Log.Debug("IsNull", $"{pos}, {b}", 0);
+            return b;
+        }
 
         public Point IndexOf(T item)
         {
@@ -43,6 +49,22 @@ namespace ECMBase
 
 
         protected abstract T _GetAt(int x, int y);
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            for(int y=0;y<rect.Height;y++)
+            {
+                for(int x=0;x<rect.Width;x++)
+                {
+                    sb.Append(GetAt(new Point(x+rect.X,y+rect.Y)));
+                    sb.Append(", ");
+                }
+                sb.AppendLine();
+            }
+            return sb.ToString();
+        }
     }
 
     public class GridMap<T> : GridMapBase<T>
@@ -197,7 +219,7 @@ namespace ECMBase
         {
 
         }
-
+        
         protected override T _GetAt(int x, int y)
         {
             throw new NotImplementedException();
@@ -209,6 +231,8 @@ namespace ECMBase
         List<(Size offset, BlockMap<T> map)> puzzlemap;
 
         Rectangle rect;
+
+        public List<(Size offset, BlockMap<T> map)> maps => puzzlemap;
 
         public PuzzleMapBuilder()
         {
@@ -228,42 +252,63 @@ namespace ECMBase
 
         void ExtendCheck()
         {
-            
+            Log.Start("ExtendCheck");
 
             int leftend = puzzlemap.Select((v) => v.offset.Width + v.map.rect.Left).Min();
             int rightend = puzzlemap.Select((v) => v.offset.Width + v.map.rect.Right).Max();
             int topend = puzzlemap.Select((v) => v.offset.Height + v.map.rect.Top).Min();
             int bottomend = puzzlemap.Select((v) => v.offset.Height + v.map.rect.Bottom).Max();
 
+            Log.Debug("beforeRect", this.rect);
             this.rect = new Rectangle(leftend, topend, rightend -leftend, bottomend-topend);
-
+            Log.Debug("afterRect", this.rect);
+            Log.End();
         }
 
         public bool TryStackMap(BlockMap<T> map, IEnumerable<Size> offsets)
         {
-            foreach(Size offset in offsets)
+            Log.Start("TryStackMaps");
+            foreach (Size offset in offsets)
             {
                 if(TryStackMap(map, offset))
                 {
+                    Log.Debug("notStackable", offset);
+                    Log.End();
                     return true;
                 }
+                Log.Debug("pass", offset);
             }
+            Log.End();
             return false;
         }
 
         public bool TryStackMap(BlockMap<T> map, Size offset)
         {
-            
-            var poss = DT.Filler(DT.Add(map.rect,offset));
+            Log.Start("TryStackMap");
 
-            ForceStackMap(map, offset);
+            Log.Debug($"map Rect", map.rect);
+            Log.Debug($"stackedmap Offset", offset - map.middle);
 
-            var b = IsPuzzled(poss);
+            Rectangle rect1 = DT.Add(map.rect, offset-map.middle);
 
-            Log.Message(b.ToString());
+            Log.Debug($"new Rect" , rect1);
 
-            if(!b) puzzlemap.RemoveAt(puzzlemap.Count-1);
+            var poss = DT.Filler(rect1);
 
+            Log.Debug($"poss Count", poss.Count());
+
+            bool b = IsEmpty(poss);
+
+            Log.Debug("IsPuzzled", b);
+
+            if (b)
+            {
+                Log.Debug("Stacked");
+                ForceStackMap(map, offset);
+            }
+            Log.Debug("map offsets", puzzlemap.Select((val)=>val.offset));
+
+            Log.End();
             return b;
         }
 
@@ -271,7 +316,9 @@ namespace ECMBase
         {
             foreach ((Size offset, GridMapBase<T> map) in puzzlemap)
             {
-                yield return map.GetAt(pos + offset);
+                var v = map.GetAt(pos - offset);
+                if (v!=null)
+                    yield return map.GetAt(pos - offset);
             }
             yield break;
         }
@@ -280,25 +327,80 @@ namespace ECMBase
 
         public bool IsPuzzled(IEnumerable<Point> poss)
         {
+            Log.Start("IsPuzzled Repeat");
             foreach(Point pos in poss)
             {
                 if (!IsPuzzled(pos))
+                {
+                    Log.Debug("IsNotPuzzled", pos);
+                    Log.End();
                     return false;
+                }
+                Log.Debug("IsPuzzled", pos);
             }
+            Log.End();
             return true;
         }
         public bool IsPuzzled(Point pos)
         {
+            Log.Start("IsPuzzled");
             bool isConquered = false;
             foreach ((var offset, var mapcomp) in puzzlemap)
             {
-                if (!mapcomp.IsNullorDefault(pos))
+                if (!mapcomp.IsNullorDefault(pos - offset))
                 {
-                    if(isConquered)
+                    Log.Debug($"IsConquered", pos);
+                    if (isConquered)
+                    {
+                        Log.Debug($"IsNotPuzzled", pos);
+                        Log.End();
                         return false;
+                    }
                     isConquered = true;
                 }
+                else
+                {
+                    Log.Debug($"IsNotConquered", pos);
+                }
             }
+            Log.Debug("IsPuzzled", pos);
+            Log.End();
+            return true;
+        }
+
+
+        public bool IsEmpty(IEnumerable<Point> poss)
+        {
+            Log.Start("IsEmpty Repeat");
+            foreach (Point pos in poss)
+            {
+                if (!IsEmpty(pos))
+                {
+                    Log.Debug("IsNotEmpty", pos);
+                    Log.End();
+                    return false;
+                }
+                Log.Debug("IsEmpty", pos);
+            }
+            Log.End();
+            return true;
+        }
+        public bool IsEmpty(Point pos)
+        {
+            Log.Start("IsEmpty");
+            foreach ((var offset, var mapcomp) in puzzlemap)
+            {
+                if (!mapcomp.IsNullorDefault(pos - offset))
+                {
+                    Log.Debug($"IsNotEmpty", pos);
+                    Log.End();
+                    return false;
+                }
+
+                Log.Debug($"IsEmpty", pos);
+            }
+            Log.Debug("IsEmpty", pos);
+            Log.End();
             return true;
         }
 
@@ -316,6 +418,18 @@ namespace ECMBase
         public void GetPuzzleMap()
         {
 
+        }
+
+        public override string ToString()
+        {
+            GridMapBuilder<int?> mb = new GridMapBuilder<int?>();
+            var poss = DT.Filler(this.rect);
+            foreach(var pos in poss)
+            {
+                int num = XRay(pos).Count();
+                mb.SetAt(pos,num);
+            }
+            return mb.ToString();
         }
     }
 
@@ -339,9 +453,9 @@ namespace ECMBase
 
         public static IEnumerable<Point> Filler(Rectangle rect)
         {
-            for(int x=rect.X; x<rect.Width; x++)
+            for(int x=rect.X; x<rect.X + rect.Width; x++)
             {
-                for(int y=rect.Y; y<rect.Height; y++)
+                for(int y=rect.Y; y<rect.Y + rect.Height; y++)
                 {
                     yield return new Point(x,y);
                 }
